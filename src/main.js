@@ -46,7 +46,7 @@ const createWindow = () => {
 const fileWriter = () => {
 
     console.log('Function ran');
-  fs.writeFile("../data/data.text", "Hey there!", function(err) {
+  fs.writeFile("data/test.txt", "Hey there!", function(err) {
 
       if(err) {
           return console.log(err);

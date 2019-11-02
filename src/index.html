@@ -77,6 +77,10 @@
                   </div>
                 </div>
                 <script type="text/javascript">
+                function SubmitButtonFunction() {
+                  const{ ipcRenderer } = window.require('electron');
+                  ipcRenderer.send('SubmitButtonClick');
+                }
                   function changeAnn(){
                     document.getElementById('button_dropdown').innerHTML = 'Announcement';
                     document.getElementById('input_time').style.display = 'none';
