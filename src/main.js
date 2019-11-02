@@ -44,7 +44,11 @@ const createWindow = () => {
 };
 
 const fileWriter = (event, arg) => {
+<<<<<<< HEAD
     fs.appendFile("data/" + arg[0], arg[1] + " " + arg[2] + "\n", function(err) {
+=======
+    fs.appendFile("data/" + arg[0], arg[1] + " " + arg[2] + '\n', function(err) {
+>>>>>>> 7a7ec7ef16ab25a4ed10a5256ae7aff56bcc5372
     if(err) {
       return console.log(err);
     }
