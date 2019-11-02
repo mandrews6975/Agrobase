@@ -34,7 +34,7 @@
                     let date = document.getElementById('current_date').innerHTML;
                     let mm = date.substring(0, 2);
                     let dd = date.substring(3, 5);
-                    let yyy = date.substring(6);
+                    let yyyy = date.substring(6);
                     date = new Date(yyyy, mm - 1, dd);
                     date.setDate(date.getDate() - 1);
                     dd = String(date.getDate()).padStart(2, '0');
@@ -47,7 +47,7 @@
                     let date = document.getElementById('current_date').innerHTML;
                     let mm = date.substring(0, 2);
                     let dd = date.substring(3, 5);
-                    let yyy = date.substring(6);
+                    let yyyy = date.substring(6);
                     date = new Date(yyyy, mm - 1, dd);
                     date.setDate(date.getDate() + 1);
                     dd = String(date.getDate()).padStart(2, '0');
@@ -111,8 +111,13 @@
                   <button id="SubmitButton" class="btn btn-secondary text-white" onclick="SubmitButtonFunction()">Submit</button>
                   <script type="text/javascript">
                     function SubmitButtonFunction() {
-                      const{ ipcRenderer } = window.require('electron');
-                      ipcRenderer.send('SubmitButtonClick');
+                      const { ipcRenderer } = window.require('electron');
+                      let date = document.getElementById('current_date').innerHTML;
+                      let mm = date.substring(0, 2);
+                      let dd = date.substring(3, 5);
+                      let yyyy = date.substring(6);
+                      let args = [mm + dd + yyyy, document.getElementById('input_time').value, document.getElementById('input_announcement_event').value];
+                      ipcRenderer.send('SubmitButtonClick', args);
                     }
                   </script>
                 </div>
@@ -126,7 +131,6 @@
       </div>
     </div>
   </body>
-
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" crossorigin="anonymous"></script>
