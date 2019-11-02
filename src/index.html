@@ -11,7 +11,15 @@
         <div class="col-6">
           <div class="card text-white bg-primary">
             <div class="card-header">
-              Today's date
+              <h4 id="current_date"></h4>
+              <script type="text/javascript">
+                let date = new Date();
+                let dd = String(date.getDate()).padStart(2, '0');
+                let mm = String(date.getMonth() + 1).padStart(2, '0');
+                let yyyy = date.getFullYear();
+                date = mm + '/' + dd + '/' + yyyy;
+                document.getElementById('current_date').innerHTML = date;
+              </script>
             </div>
             <div class="card-body">
 
