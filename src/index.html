@@ -11,11 +11,8 @@
       require('popper.js');
       require('bootstrap');
       require('electron');
+      const ipcRenderer = require('electron').ipcRenderer;
     </script>
-<<<<<<< HEAD
-
-=======
->>>>>>> 801a0f93a6a84a7791d40cf067b8220bd918dc50
     <div class="container-fluid">
       <div class="row">
         <div class="col-6">
@@ -34,10 +31,12 @@
                     let yyyy = date.getFullYear();
                     date = mm + '/' + dd + '/' + yyyy;
                     document.getElementById('current_date').innerHTML = date;
+                    sendDate();
+                    receiveScheduleData();
                   </script>
                 </div>
                 <div class="col-2">
-                  <button id="button_next_day" class="btn btn-secondary text-white" onclick="nextDay()">>>></button>
+                <button id="button_next_day" class="btn btn-secondary text-white" onclick="nextDay()">>>></button>
                 </div>
                 <script type="text/javascript">
                   function prevDay(){
@@ -52,6 +51,8 @@
                     yyyy = date.getFullYear();
                     date = mm + '/' + dd + '/' + yyyy;
                     document.getElementById('current_date').innerHTML = date;
+                    sendDate();
+                    receiveScheduleData();
                   }
                   function nextDay(){
                     let date = document.getElementById('current_date').innerHTML;
@@ -65,6 +66,8 @@
                     yyyy = date.getFullYear();
                     date = mm + '/' + dd + '/' + yyyy;
                     document.getElementById('current_date').innerHTML = date;
+                    sendDate();
+                    receiveScheduleData();
                   }
                 </script>
               </div>
@@ -72,7 +75,7 @@
             <div class="card-body">
               <div class="row">
                 <div class="col" style="max-height: 100%">
-                  <table id="" class="table">
+                  <table id="ScheduleTable" class="table">
                     <!-- table rows to be added here (imported from file) -->
                   </table>
                 </div>
@@ -87,10 +90,23 @@
                   </div>
                 </div>
                 <script type="text/javascript">
-                function SubmitButtonFunction() {
-                  const{ ipcRenderer } = window.require('electron');
-                  ipcRenderer.send('SubmitButtonClick');
-                }
+                  function sendDate() {
+                    let date = document.getElementById('current_date').innerHTML;
+                    let mm = date.substring(0, 2);
+                    let dd = date.substring(3, 5);
+                    let yyyy = date.substring(6);
+                    ipcRenderer.send('Date', mm + dd + yyyy)
+                  }
+                  //Waits to recieve list of schedule entries, renders schedule
+                  function receiveScheduleData() {
+                    //$("#ScheduleTable").empty();
+                    ipcRenderer.on('ScheduleData', (event, arg) => {
+                      for(int i = i; i<arg.size; i++) {
+                          document.getElementById('ScheduleTable').insertRow(arg[i]);
+                      }
+                    });
+                  }
+
                   function changeAnn(){
                     document.getElementById('button_dropdown').innerHTML = 'Announcement';
                     document.getElementById('input_time').style.display = 'none';
@@ -121,7 +137,7 @@
                   <button id="SubmitButton" class="btn btn-secondary text-white" onclick="SubmitButtonFunction()">Submit</button>
                   <script type="text/javascript">
                     function SubmitButtonFunction() {
-                      const { ipcRenderer } = window.require('electron');
+
                       let date = document.getElementById('current_date').innerHTML;
                       let mm = date.substring(0, 2);
                       let dd = date.substring(3, 5);
@@ -132,9 +148,8 @@
                       }
                       let args = [mm + dd + yyyy, document.getElementById('input_time').value + AMPM , document.getElementById('input_announcement_event').value];
                       ipcRenderer.send('SubmitButtonClick', args);
-                        ipcRenderer.on('SubmitReturnData', (event, arg) => {
-                          
-                        });
+                      sendDate();
+                      receiveScheduleData();
                     }
                   </script>
                 </div>

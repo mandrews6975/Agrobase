@@ -1,6 +1,6 @@
 const { app, BrowserWindow } = require('electron');
 const fs = require('fs');
-const ipc = require('electron').ipcMain;
+const ipcMain = require('electron').ipcMain;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -44,7 +44,7 @@ const createWindow = () => {
 };
 
 const fileWriter = (event, arg) => {
-    fs.appendFile("data/" + arg[0], arg[1] + " " + arg[2] , function(err) {
+    fs.appendFile("data/" + arg[0], arg[1] + " " + arg[2] + '\n', function(err) {
     if(err) {
       return console.log(err);
     }
