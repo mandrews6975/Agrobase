@@ -12,7 +12,10 @@
       require('bootstrap');
       require('electron');
     </script>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 801a0f93a6a84a7791d40cf067b8220bd918dc50
     <div class="container-fluid">
       <div class="row">
         <div class="col-6">
@@ -129,6 +132,9 @@
                       }
                       let args = [mm + dd + yyyy, document.getElementById('input_time').value + AMPM , document.getElementById('input_announcement_event').value];
                       ipcRenderer.send('SubmitButtonClick', args);
+                        ipcRenderer.on('SubmitReturnData', (event, arg) => {
+                          
+                        });
                     }
                   </script>
                 </div>
