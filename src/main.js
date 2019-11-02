@@ -43,24 +43,11 @@ const createWindow = () => {
   });
 };
 
-<<<<<<< HEAD
-const fileWriter = () => {
-
-    console.log('Function ran');
-  fs.writeFile("data/test.txt", "Hey there!", function(err) {
-
-      if(err) {
-          return console.log(err);
-      }
-
-      console.log("The file was saved!");
-=======
 const fileWriter = (event, arg) => {
     fs.appendFile("data/" + arg[0], arg[1] + " " + arg[2] , function(err) {
     if(err) {
       return console.log(err);
     }
->>>>>>> d0994aebd213dde8ca2e4cf6dc857e99b654f1ae
   });
 }
 
