@@ -32,19 +32,30 @@
               </div>
             </div>
             <div class="card-body">
-              
-
-                  <form>
-                    <div class="row">
-                      <div class="col">
-                        <input type="text" class="form-control" placeholder="First name">
-                      </div>
-                      <div class="col">
-                        <input type="text" class="form-control" placeholder="Last name">
-                      </div>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="dropdown">
+                    <button type="button" id="button_dropdown" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Announcement</button>
+                    <div class="dropdown-menu">
+                      <button id="dditem_ann" class="dropdown-item" href="#" onclick="changeAnn()">Announcement</button>
+                      <button id="dditem_event" class="dropdown-item" href="#" onclick="changeEvent()">Event</button>
                     </div>
-                  </form>
-
+                  </div>
+                </div>
+                <script type="text/javascript">
+                  function changeAnn(){
+                    document.getElementById('button_dropdown').innerHTML = 'Announcement';
+                  }
+                  function changeEvent(){
+                    document.getElementById('button_dropdown').innerHTML = 'Event';
+                  }
+                </script>
+                <input type="text" id="input_time" class="form-control">
+                <input type="text" id="input_announcement/event" class="form-control" style="width: 50%">
+                <div class="input-group-append">
+                  <button class="btn btn-secondary text-white" name="">Submit</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -54,7 +65,7 @@
       </div>
     </div>
   </body>
-  <script type="text/javascript">let $ = require('jquery');</script>
-  <script type="text/javascript">require('popper.js');</script>
-  <script type="text/javascript">require('bootstrap');</script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" crossorigin="anonymous"></script>
 </html>
