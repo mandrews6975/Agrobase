@@ -1,4 +1,6 @@
 const { app, BrowserWindow } = require('electron');
+const fs = require('fs');
+const ipc = require('electron').ipcMain;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -12,6 +14,9 @@ let mainWindow;
 const createWindow = () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
+    webPreferences: {
+            nodeIntegration: true
+        },
     width: 1280,
     height: 720,
     minWidth: 1280,
@@ -38,10 +43,31 @@ const createWindow = () => {
   });
 };
 
+const fileWriter = () => {
+
+    console.log('Function ran');
+  fs.writeFile("../data/data.text", "Hey there!", function(err) {
+
+      if(err) {
+          return console.log(err);
+      }
+
+      console.log("The file was saved!");
+  });
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
+  //createWindow;
+  //ipc.on('SubmitButtonClick', fileWriter);
+app.on('ready', () => {
+    ipc.on('SubmitButtonClick', fileWriter)
+});
+
+
+
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
