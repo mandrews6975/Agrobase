@@ -45,13 +45,15 @@
                 <script type="text/javascript">
                   function changeAnn(){
                     document.getElementById('button_dropdown').innerHTML = 'Announcement';
+                    document.getElementById('input_time').style.display = 'none';
                   }
                   function changeEvent(){
                     document.getElementById('button_dropdown').innerHTML = 'Event';
+                    document.getElementById('input_time').style.display = 'block';
                   }
                 </script>
-                <input type="text" id="input_time" class="form-control">
-                <input type="text" id="input_announcement/event" class="form-control" style="width: 50%">
+                <input type="text" id="input_time" class="form-control" placeholder="Time" style="display: none;">
+                <input type="text" id="input_announcement_event" class="form-control" placeholder="Information" style="width: 50%">
                 <div class="input-group-append">
                   <button class="btn btn-secondary text-white" name="">Submit</button>
                 </div>
