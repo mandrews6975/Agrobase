@@ -9,17 +9,27 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-6">
-          <div class="card text-white bg-primary">
-            <div class="card-header">
-              <h4 id="current_date"></h4>
-              <script type="text/javascript">
-                let date = new Date();
-                let dd = String(date.getDate()).padStart(2, '0');
-                let mm = String(date.getMonth() + 1).padStart(2, '0');
-                let yyyy = date.getFullYear();
-                date = mm + '/' + dd + '/' + yyyy;
-                document.getElementById('current_date').innerHTML = date;
-              </script>
+          <div class="card text-white bg-primary mt-3">
+            <div class="card-header" style="text-align: center">
+              <div class="row">
+                <div class="col-2">
+                  <button class="btn btn-secondary text-white" name="button_prev_day"><<<</button>
+                </div>
+                <div class="col-8">
+                  <h3 id="current_date"></h3>
+                  <script type="text/javascript">
+                    let date = new Date();
+                    let dd = String(date.getDate()).padStart(2, '0');
+                    let mm = String(date.getMonth() + 1).padStart(2, '0');
+                    let yyyy = date.getFullYear();
+                    date = mm + '/' + dd + '/' + yyyy;
+                    document.getElementById('current_date').innerHTML = date;
+                  </script>
+                </div>
+                <div class="col-2">
+                  <button class="btn btn-secondary text-white" name="button_prev_day">>>></button>
+                </div>
+              </div>
             </div>
             <div class="card-body">
 
