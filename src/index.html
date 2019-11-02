@@ -13,7 +13,7 @@
             <div class="card-header" style="text-align: center">
               <div class="row">
                 <div class="col-2">
-                  <button class="btn btn-secondary text-white" name="button_prev_day"><<<</button>
+                  <button id="button_prev_day" class="btn btn-secondary text-white" onclick="prevDay()"><<<</button>
                 </div>
                 <div class="col-8">
                   <h3 id="current_date"></h3>
@@ -27,11 +27,45 @@
                   </script>
                 </div>
                 <div class="col-2">
-                  <button class="btn btn-secondary text-white" name="button_prev_day">>>></button>
+                  <button id="button_next_day" class="btn btn-secondary text-white" onclick="nextDay()">>>></button>
                 </div>
+                <script type="text/javascript">
+                  function prevDay(){
+                    let date = document.getElementById('current_date').innerHTML;
+                    let mm = date.substring(0, 2);
+                    let dd = date.substring(3, 5);
+                    let yyy = date.substring(6);
+                    date = new Date(yyyy, mm - 1, dd);
+                    date.setDate(date.getDate() - 1);
+                    dd = String(date.getDate()).padStart(2, '0');
+                    mm = String(date.getMonth() + 1).padStart(2, '0');
+                    yyyy = date.getFullYear();
+                    date = mm + '/' + dd + '/' + yyyy;
+                    document.getElementById('current_date').innerHTML = date;
+                  }
+                  function nextDay(){
+                    let date = document.getElementById('current_date').innerHTML;
+                    let mm = date.substring(0, 2);
+                    let dd = date.substring(3, 5);
+                    let yyy = date.substring(6);
+                    date = new Date(yyyy, mm - 1, dd);
+                    date.setDate(date.getDate() + 1);
+                    dd = String(date.getDate()).padStart(2, '0');
+                    mm = String(date.getMonth() + 1).padStart(2, '0');
+                    yyyy = date.getFullYear();
+                    date = mm + '/' + dd + '/' + yyyy;
+                    document.getElementById('current_date').innerHTML = date;
+                  }
+                </script>
               </div>
             </div>
             <div class="card-body">
+              <div class="row">
+                <div class="col" style="max-height: 100%">
+                  <table id="" class="table">
+                    <!-- table rows to be added here (imported from file) -->
+                  </table>
+                </div>
               <div class="input-group">
                 <div class="input-group-prepend">
                   <div class="dropdown">
