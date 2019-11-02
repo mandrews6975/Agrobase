@@ -15,8 +15,8 @@ const createWindow = () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     webPreferences: {
-            nodeIntegration: true
-        },
+      nodeIntegration: true
+    },
     width: 1280,
     height: 720,
     minWidth: 1280,
@@ -43,16 +43,11 @@ const createWindow = () => {
   });
 };
 
-const fileWriter = () => {
-
-    console.log('Function ran');
-  fs.writeFile("../data/data.text", "Hey there!", function(err) {
-
-      if(err) {
-          return console.log(err);
-      }
-
-      console.log("The file was saved!");
+const fileWriter = (event, arg) => {
+    fs.appendFile("data/" + arg[0], arg[1] + " " + arg[2] , function(err) {
+    if(err) {
+      return console.log(err);
+    }
   });
 }
 
@@ -63,7 +58,9 @@ app.on('ready', createWindow);
   //createWindow;
   //ipc.on('SubmitButtonClick', fileWriter);
 app.on('ready', () => {
-    ipc.on('SubmitButtonClick', fileWriter)
+    ipc.on('SubmitButtonClick', (event, arg) => {
+      fileWriter(event, arg);
+    });
 });
 
 
