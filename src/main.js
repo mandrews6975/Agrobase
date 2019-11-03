@@ -44,22 +44,29 @@ const createWindow = () => {
 };
 
 const fileWriter = (event, arg) => {
-<<<<<<< HEAD
-    fs.appendFile("data/" + arg[0], arg[1] + " " + arg[2] + "\n", function(err) {
-=======
-    fs.appendFile("data/" + arg[0], arg[1] + " " + arg[2] + '\n', function(err) {
->>>>>>> 7a7ec7ef16ab25a4ed10a5256ae7aff56bcc5372
+    fs.appendFile("data/" + arg[0], arg[1] + " " + arg[2] + '\n', 'utf8', function(err) {
     if(err) {
       return console.log(err);
     }
+    console.log("file updated");
   });
 }
 
 const returnData = (event, arg) => {
-  fs.readFile("data/" + arg[0], (error, data) => {
-     data = data.split("\n");
+  console.log("returnData starting");
+  fs.appendFile("data/" + arg, "", 'utf8', function(err){
+    if(err){
+      return console.log(err);
+    }
+  });
+  fs.readFile("data/" + arg, 'utf8', (error, data) => {
+    if(error){
+      console.log(error);
+    }
+    data = data.split("\n");
     event.sender.send('ScheduleData', data);
   });
+  console.log("data read and sent");
 }
 
 // This method will be called when Electron has finished
