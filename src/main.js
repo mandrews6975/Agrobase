@@ -43,16 +43,26 @@ const createWindow = () => {
   });
 };
 
+<<<<<<< HEAD
 const fileWriter = (event, arg) => {
     fs.appendFile("data/" + arg[0], arg[1] + " " + arg[2] + '\n', 'utf8', function(err) {
     if(err) {
       return console.log(err);
     }
     console.log("file updated");
+=======
+const fileWriter = (event, arg, callback) => {
+    fs.appendFile("data/" + arg[0], arg[1] + " " + arg[2] + "\n", function(err) {
+    if(err) {
+      return console.log(err);
+    }
+    if (callback) callback();
+>>>>>>> 861f050f6c25f1c5a419f5aeef648b572da799c9
   });
 }
 
 const returnData = (event, arg) => {
+<<<<<<< HEAD
   console.log("returnData starting");
   fs.appendFile("data/" + arg, "", 'utf8', function(err){
     if(err){
@@ -64,6 +74,19 @@ const returnData = (event, arg) => {
       console.log(error);
     }
     data = data.split("\n");
+=======
+  fs.appendFile("data/" + arg, "", 'utf8',function(err) {
+    if(err) {
+      return console.log(err);
+    }
+  });
+  fs.readFile("data/" + arg, 'utf8', (err, data) => {
+    if(err) {
+      return console.log(err);
+    }
+
+  data = data.split("\n");
+>>>>>>> 861f050f6c25f1c5a419f5aeef648b572da799c9
     event.sender.send('ScheduleData', data);
   });
   console.log("data read and sent");
@@ -77,7 +100,9 @@ app.on('ready', createWindow);
   //ipc.on('SubmitButtonClick', fileWriter);
 app.on('ready', () => {
     ipcMain.on('SubmitButtonClick', (event, arg) => {
-      fileWriter(event, arg);
+      fileWriter(event, arg, () => {
+        event.sender.send('fileWritingDone');
+      });
     });
     ipcMain.on('Date', (event, arg) => {
       returnData(event, arg);

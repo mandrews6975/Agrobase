@@ -1,3 +1,11 @@
+function sendDate() {
+  let date = document.getElementById('current_date').innerHTML;
+  let mm = date.substring(0, 2);
+  let dd = date.substring(3, 5);
+  let yyyy = date.substring(6);
+  ipcRenderer.send('Date', mm + dd + yyyy)
+}
+//Waits to recieve list of schedule entries, renders schedule
 function receiveScheduleData() {
   //$("#ScheduleTable").empty();
   ipcRenderer.on('ScheduleData', (event, arg) => {
@@ -12,17 +20,6 @@ function receiveScheduleData() {
       cell.innerHTML = arg[i];
     }
   });
-  console.log("table updated");
-}
-
-function sendDate() {
-  console.log("sendDate called");
-  let date = document.getElementById('current_date').innerHTML;
-  let mm = date.substring(0, 2);
-  let dd = date.substring(3, 5);
-  let yyyy = date.substring(6);
-  ipcRenderer.send('Date', mm + dd + yyyy);
-  console.log("date sent");
 }
 
 function prevDay(){
@@ -57,8 +54,25 @@ function nextDay(){
   receiveScheduleData();
 }
 
+function changeAnn(){
+  document.getElementById('button_dropdown').innerHTML = 'Announcement';
+  document.getElementById('input_time').style.display = 'none';
+  document.getElementById('AMPM_dropdown').style.display = 'none';
+}
+function changeEvent(){
+  document.getElementById('button_dropdown').innerHTML = 'Event';
+  document.getElementById('input_time').style.display = 'block';
+  document.getElementById('AMPM_dropdown').style.display = 'block';
+}
+function changeAM(){
+  document.getElementById('AMPM_dropdown').innerHTML = 'AM';
+}
+function changePM(){
+document.getElementById('AMPM_dropdown').innerHTML = 'PM';
+}
+
 function SubmitButtonFunction() {
-  console.log("submit button pressed");
+
   let date = document.getElementById('current_date').innerHTML;
   let mm = date.substring(0, 2);
   let dd = date.substring(3, 5);
@@ -69,6 +83,8 @@ function SubmitButtonFunction() {
   }
   let args = [mm + dd + yyyy, document.getElementById('input_time').value + AMPM , document.getElementById('input_announcement_event').value];
   ipcRenderer.send('SubmitButtonClick', args);
-  sendDate();
-  receiveScheduleData();
+  ipcRenderer.on('fileWritingDone', () => {
+    sendDate();
+    receiveScheduleData();
+  });
 }

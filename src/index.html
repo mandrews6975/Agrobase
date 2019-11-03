@@ -39,7 +39,6 @@
                 <div class="col-2">
                   <button id="button_next_day" class="btn btn-secondary text-white" onclick="nextDay()">>>></button>
                 </div>
-                </script>
               </div>
             </div>
             <div class="card-body">
@@ -59,24 +58,6 @@
                     </div>
                   </div>
                 </div>
-                <script type="text/javascript">
-                  function changeAnn(){
-                    document.getElementById('button_dropdown').innerHTML = 'Announcement';
-                    document.getElementById('input_time').style.display = 'none';
-                    document.getElementById('AMPM_dropdown').style.display = 'none';
-                  }
-                  function changeEvent(){
-                    document.getElementById('button_dropdown').innerHTML = 'Event';
-                    document.getElementById('input_time').style.display = 'block';
-                    document.getElementById('AMPM_dropdown').style.display = 'block';
-                  }
-                  function changeAM(){
-                    document.getElementById('AMPM_dropdown').innerHTML = 'AM';
-                  }
-                  function changePM(){
-                  document.getElementById('AMPM_dropdown').innerHTML = 'PM';
-                  }
-                </script>
                 <input type="text" id="input_time" class="form-control" placeholder="Time (02:00)" style="display: none;">
                 <div class="dropdown">
                   <button type="button" id="AMPM_dropdown" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style = "display: none;">AM</button>
