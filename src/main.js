@@ -1,4 +1,7 @@
-const { app, BrowserWindow } = require('electron');
+const {
+  app,
+  BrowserWindow
+} = require('electron');
 const fs = require('fs');
 const ipcMain = require('electron').ipcMain;
 
@@ -43,70 +46,48 @@ const createWindow = () => {
   });
 };
 
-<<<<<<< HEAD
-const fileWriter = (event, arg) => {
-    fs.appendFile("data/" + arg[0], arg[1] + " " + arg[2] + '\n', 'utf8', function(err) {
-    if(err) {
-      return console.log(err);
-    }
-    console.log("file updated");
-=======
+
+
 const fileWriter = (event, arg, callback) => {
-    fs.appendFile("data/" + arg[0], arg[1] + " " + arg[2] + "\n", function(err) {
-    if(err) {
+  fs.appendFile("data/" + arg[0], arg[1] + " " + arg[2] + "\n", function(err) {
+    if (err) {
       return console.log(err);
     }
     if (callback) callback();
->>>>>>> 861f050f6c25f1c5a419f5aeef648b572da799c9
   });
 }
 
 const returnData = (event, arg) => {
-<<<<<<< HEAD
-  console.log("returnData starting");
-  fs.appendFile("data/" + arg, "", 'utf8', function(err){
-    if(err){
+  fs.appendFile("data/" + arg, "", 'utf8', function(err) {
+    if (err) {
       return console.log(err);
     }
+    //readFile only can occur after appendFile callback
+    fs.readFile("data/" + arg, 'utf8', (err, data) => {
+      if (err) {
+        return console.log(err);
+      }
+      data = data.split("\n");
+      event.sender.send('ScheduleData', data);
+    });
   });
-  fs.readFile("data/" + arg, 'utf8', (error, data) => {
-    if(error){
-      console.log(error);
-    }
-    data = data.split("\n");
-=======
-  fs.appendFile("data/" + arg, "", 'utf8',function(err) {
-    if(err) {
-      return console.log(err);
-    }
-  });
-  fs.readFile("data/" + arg, 'utf8', (err, data) => {
-    if(err) {
-      return console.log(err);
-    }
-
-  data = data.split("\n");
->>>>>>> 861f050f6c25f1c5a419f5aeef648b572da799c9
-    event.sender.send('ScheduleData', data);
-  });
-  console.log("data read and sent");
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
-  //createWindow;
-  //ipc.on('SubmitButtonClick', fileWriter);
+//createWindow;
+//ipc.on('SubmitButtonClick', fileWriter);
 app.on('ready', () => {
-    ipcMain.on('SubmitButtonClick', (event, arg) => {
-      fileWriter(event, arg, () => {
-        event.sender.send('fileWritingDone');
-      });
+  ipcMain.on('SubmitButtonClick', (event, arg) => {
+    fileWriter(event, arg, () => {
+      event.sender.send('fileWritingDone');
     });
-    ipcMain.on('Date', (event, arg) => {
-      returnData(event, arg);
-    });
+  });
+  ipcMain.on('Date', (event, arg) => {
+    returnData(event, arg);
+  });
 });
 
 
