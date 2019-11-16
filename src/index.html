@@ -1,53 +1,54 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Agrobase</title>
-    <link rel="stylesheet" href="./bootstrap/css/bootstrap.min.css">
-  </head>
-  <body>
-    <script type="text/javascript">
-      require('jquery');
-      require('popper.js');
-      require('bootstrap');
-      require('electron');
-      const ipcRenderer = require('electron').ipcRenderer;
-    </script>
-    <script src="index.js"></script>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-6">
-          <div class="card text-white bg-primary mt-3">
-            <div class="card-header" style="text-align: center">
-              <div class="row">
-                <div class="col-2">
-                  <button id="button_prev_day" class="btn btn-secondary text-white" onclick="prevDay()"><<<</button>
-                </div>
-                <div class="col-8">
-                  <h3 id="current_date"></h3>
-                  <script type="text/javascript">
-                    let date = new Date();
-                    let dd = String(date.getDate()).padStart(2, '0');
-                    let mm = String(date.getMonth() + 1).padStart(2, '0');
-                    let yyyy = date.getFullYear();
-                    date = mm + '/' + dd + '/' + yyyy;
-                    document.getElementById('current_date').innerHTML = date;
-                    sendDate();
-                    receiveScheduleData();
-                  </script>
-                </div>
-                <div class="col-2">
-                  <button id="button_next_day" class="btn btn-secondary text-white" onclick="nextDay()">>>></button>
-                </div>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Agrobase</title>
+  <link rel="stylesheet" href="./bootstrap/css/bootstrap.min.css">
+</head>
+
+<body>
+  <script type="text/javascript">
+    require('jquery');
+    require('popper.js');
+    require('bootstrap');
+    require('electron');
+    const ipcRenderer = require('electron').ipcRenderer;
+  </script>
+  <script src="index.js"></script>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-6">
+        <div class="card text-white bg-primary mt-3">
+          <div class="card-header" style="text-align: center">
+            <div class="row">
+              <div class="col-2">
+                <button id="button_prev_day" class="btn btn-secondary text-white" onclick="prevDay()">
+                  <<<</button> </div> <div class="col-8">
+                    <h3 id="current_date"></h3>
+                    <script type="text/javascript">
+                      let date = new Date();
+                      let dd = String(date.getDate()).padStart(2, '0');
+                      let mm = String(date.getMonth() + 1).padStart(2, '0');
+                      let yyyy = date.getFullYear();
+                      date = mm + '/' + dd + '/' + yyyy;
+                      document.getElementById('current_date').innerHTML = date;
+                      sendDate();
+                      receiveScheduleData();
+                    </script>
+              </div>
+              <div class="col-2">
+                <button id="button_next_day" class="btn btn-secondary text-white" onclick="nextDay()">>>></button>
               </div>
             </div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col" style="max-height: 100%">
-                  <table id="ScheduleTable" class="table table-hover table-dark">
-                    <!-- table rows to be added here (imported from file) -->
-                  </table>
-                </div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col" style="max-height: 100%">
+                <table id="ScheduleTable" class="table table-hover table-dark">
+                  <!-- table rows to be added here (imported from file) -->
+                </table>
+              </div>
               <div class="input-group">
                 <div class="input-group-prepend">
                   <div class="dropdown">
@@ -60,7 +61,7 @@
                 </div>
                 <input type="text" id="input_time" class="form-control" placeholder="Time (02:00)" style="display: none;">
                 <div class="dropdown">
-                  <button type="button" id="AMPM_dropdown" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style = "display: none;">AM</button>
+                  <button type="button" id="AMPM_dropdown" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: none;">AM</button>
                   <div class="dropdown-menu">
                     <button id="AM_Button" class="dropdown-item" href="#" onclick="changeAM()">AM</button>
                     <button id="PM_Button" class="dropdown-item" href="#" onclick="changePM()">PM</button>
@@ -79,5 +80,6 @@
         </div>
       </div>
     </div>
-  </body>
+</body>
+
 </html>

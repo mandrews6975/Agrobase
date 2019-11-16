@@ -7,14 +7,12 @@ function sendDate() {
 }
 //Waits to recieve list of schedule entries, renders schedule
 function receiveScheduleData() {
-  //$("#ScheduleTable").empty();
   ipcRenderer.on('ScheduleData', (event, arg) => {
-  //  let numRows = document.getElementById('ScheduleTable').rows.length;
-  let numRows = document.getElementById('ScheduleTable').children.length;
-    for(var i = 0; i<numRows; i++) {
+    let numRows = document.getElementById('ScheduleTable').children.length;
+    for (var i = 0; i < numRows; i++) {
       document.getElementById('ScheduleTable').children[i].remove();
     }
-    for(var i = 0; i<arg.length; i++) {
+    for (var i = 0; i < arg.length; i++) {
       let row = document.getElementById('ScheduleTable').insertRow(i);
       let cell = row.insertCell(0);
       cell.innerHTML = arg[i];
@@ -22,7 +20,7 @@ function receiveScheduleData() {
   });
 }
 
-function prevDay(){
+function prevDay() {
   let date = document.getElementById('current_date').innerHTML;
   let mm = date.substring(0, 2);
   let dd = date.substring(3, 5);
@@ -38,7 +36,7 @@ function prevDay(){
   receiveScheduleData();
 }
 
-function nextDay(){
+function nextDay() {
   let date = document.getElementById('current_date').innerHTML;
   let mm = date.substring(0, 2);
   let dd = date.substring(3, 5);
@@ -54,37 +52,41 @@ function nextDay(){
   receiveScheduleData();
 }
 
-function changeAnn(){
+function changeAnn() {
   document.getElementById('button_dropdown').innerHTML = 'Announcement';
   document.getElementById('input_time').style.display = 'none';
   document.getElementById('AMPM_dropdown').style.display = 'none';
 }
-function changeEvent(){
+
+function changeEvent() {
   document.getElementById('button_dropdown').innerHTML = 'Event';
   document.getElementById('input_time').style.display = 'block';
   document.getElementById('AMPM_dropdown').style.display = 'block';
 }
-function changeAM(){
+
+function changeAM() {
   document.getElementById('AMPM_dropdown').innerHTML = 'AM';
 }
-function changePM(){
-document.getElementById('AMPM_dropdown').innerHTML = 'PM';
+
+function changePM() {
+  document.getElementById('AMPM_dropdown').innerHTML = 'PM';
 }
 
 function SubmitButtonFunction() {
-
   let date = document.getElementById('current_date').innerHTML;
   let mm = date.substring(0, 2);
   let dd = date.substring(3, 5);
   let yyyy = date.substring(6);
   var AMPM = '';
-  if(document.getElementById('button_dropdown').innerHTML == 'Event') {
+  if (document.getElementById('button_dropdown').innerHTML == 'Event') {
     AMPM = document.getElementById('AMPM_dropdown').innerHTML;
   }
-  let args = [mm + dd + yyyy, document.getElementById('input_time').value + AMPM , document.getElementById('input_announcement_event').value];
+  let args = [mm + dd + yyyy, document.getElementById('input_time').value + AMPM, document.getElementById('input_announcement_event').value];
   ipcRenderer.send('SubmitButtonClick', args);
   ipcRenderer.on('fileWritingDone', () => {
     sendDate();
     receiveScheduleData();
   });
+  document.getElementById('input_time').value = '';
+  document.getElementById('input_announcement_event').value = '';
 }
