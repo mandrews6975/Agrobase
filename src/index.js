@@ -3,7 +3,7 @@ function sendDate() {
   let mm = date.substring(0, 2);
   let dd = date.substring(3, 5);
   let yyyy = date.substring(6);
-  ipcRenderer.send('Date', mm + dd + yyyy)
+  ipcRenderer.send('Date', mm + dd + yyyy);
 }
 //Waits to recieve list of schedule entries, renders schedule
 function receiveScheduleData() {
@@ -12,10 +12,14 @@ function receiveScheduleData() {
     for (var i = 0; i < numRows; i++) {
       document.getElementById('ScheduleTable').children[i].remove();
     }
-    for (var i = 0; i < arg.length; i++) {
+    for (var i = 0; i < arg.messages.length; i++) {
       let row = document.getElementById('ScheduleTable').insertRow(i);
       let cell = row.insertCell(0);
-      cell.innerHTML = arg[i];
+      if(arg.messages[i].time != ''){
+        cell.innerHTML = arg.messages[i].time + ' ' + arg.messages[i].ampm + ': ' + arg.messages[i].message;
+      }else{
+        cell.innerHTML = arg.messages[i].message;
+      }
     }
   });
 }
@@ -81,7 +85,7 @@ function SubmitButtonFunction() {
   if (document.getElementById('button_dropdown').innerHTML == 'Event') {
     AMPM = document.getElementById('AMPM_dropdown').innerHTML;
   }
-  let args = [mm + dd + yyyy, document.getElementById('input_time').value + AMPM, document.getElementById('input_announcement_event').value];
+  let args = [mm + dd + yyyy, document.getElementById('input_time').value, AMPM, document.getElementById('input_announcement_event').value];
   ipcRenderer.send('SubmitButtonClick', args);
   ipcRenderer.on('fileWritingDone', () => {
     sendDate();

@@ -49,28 +49,51 @@ const createWindow = () => {
 
 
 const fileWriter = (event, arg, callback) => {
-  fs.appendFile("data/" + arg[0], arg[1] + " " + arg[2] + "\n", function(err) {
+  fs.readFile("data/" + arg[0] + ".json", 'utf8', (err, data) => {
     if (err) {
       return console.log(err);
     }
-    if (callback) callback();
+    let jsonObj = JSON.parse(data);
+    let newObj = {
+      time: arg[1],
+      ampm: arg[2],
+      message: arg[3]
+    };
+    jsonObj.messages.push(newObj);
+    let jsonString = JSON.stringify(jsonObj);
+    fs.writeFile("data/" + arg[0] + ".json", jsonString, function(err) {
+      if (err) {
+        return console.log(err);
+      }
+      if (callback) callback();
+    });
   });
 }
 
 const returnData = (event, arg) => {
-  fs.appendFile("data/" + arg, "", 'utf8', function(err) {
-    if (err) {
-      return console.log(err);
-    }
-    //readFile only can occur after appendFile callback
-    fs.readFile("data/" + arg, 'utf8', (err, data) => {
+  if(fs.existsSync("data/" + arg + ".json")){
+    fs.readFile("data/" + arg + ".json", 'utf8', (err, data) => {
       if (err) {
         return console.log(err);
       }
-      data = data.split("\n");
-      event.sender.send('ScheduleData', data);
+      let scheduleData = JSON.parse(data);
+      event.sender.send('ScheduleData', scheduleData);
     });
-  });
+  }else{
+    fs.appendFile("data/" + arg + ".json", '{"messages": []}', 'utf8', function(err) {
+      if (err) {
+        return console.log(err);
+      }
+      //readFile only can occur after appendFile callback
+      fs.readFile("data/" + arg + ".json", 'utf8', (err, data) => {
+        if (err) {
+          return console.log(err);
+        }
+        let scheduleData = JSON.parse(data);
+        event.sender.send('ScheduleData', scheduleData);
+      });
+    });
+  }
 }
 
 // This method will be called when Electron has finished
