@@ -60,6 +60,48 @@ const fileWriter = (event, arg, callback) => {
       message: arg[3]
     };
     jsonObj.messages.push(newObj);
+    // Sort array of messages
+    // FIXME
+    let sortedMessages = [];
+    for(let i = 0; i < jsonObj.messages.length; i++){
+      if(jsonObj.messages[i].time == ''){
+        sortedMessages.push(jsonObj.messages[i]);
+        jsonObj.messages[i] = null;
+      }
+    }
+    for(let i = 0; i < jsonObj.messages.length; i++){
+      if(jsonObj.messages[i] != null){
+        let minIndex = i;
+        for(let j = i + 1; j < jsonObj.messages.length; j++){
+          if(jsonObj.messages[j] != null && jsonObj.messages[j].ampm < jsonObj.messages[minIndex].ampm){
+            minIndex = j;
+          }else if(jsonObj.messages[j] != null && jsonObj.messages[j].ampm == jsonObj.messages[minIndex].ampm){
+            if(jsonObj.messages[minIndex].time.substring(0, 2) == '12'){
+              jsonObj.messages[minIndex].time.replace('1', '0');
+              jsonObj.messages[minIndex].time.replace('2', '0');
+            }
+            if(jsonObj.messages[j].time.substring(0, 2) == '12'){
+              jsonObj.messages[j].time.replace('1', '0');
+              jsonObj.messages[j].time.replace('2', '0');
+            }
+            if(jsonObj.messages[j].time < jsonObj.messages[minIndex].time){
+              minIndex = j;
+            }
+            if(jsonObj.messages[minIndex].time.substring(0, 2) == '00'){
+              jsonObj.messages[minIndex].time.replace('0', '1');
+              jsonObj.messages[minIndex].time.replace('0', '2');
+            }
+            if(jsonObj.messages[j].time.substring(0, 2) == '00'){
+              jsonObj.messages[j].time.replace('0', '1');
+              jsonObj.messages[j].time.replace('0', '2');
+            }
+          }
+        }
+        sortedMessages.push(jsonObj.messages[minIndex]);
+        jsonObj.messages[minIndex] = null;
+      }
+    }
+    jsonObj.messages = sortedMessages;
     let jsonString = JSON.stringify(jsonObj);
     fs.writeFile("data/" + arg[0] + ".json", jsonString, function(err) {
       if (err) {
