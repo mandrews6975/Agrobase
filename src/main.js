@@ -99,6 +99,11 @@ const fileWriter = (event, arg, callback) => {
         }
         sortedMessages.push(jsonObj.messages[minIndex]);
         jsonObj.messages[minIndex] = null;
+        //Adds message at i after the message at an earlier time is added 
+        if(minIndex != i) {
+          sortedMessages.push(jsonObj.messages[i]);
+          jsonObj.messages[i] = null;
+        }
       }
     }
     jsonObj.messages = sortedMessages;
