@@ -16,35 +16,48 @@
     const ipcRenderer = require('electron').ipcRenderer;
   </script>
   <script src="index.js"></script>
+  <div class="modal fade" id="modal_new_message" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content text-white bg-primary">
+        <div class="modal-header">
+          <h6 class="modal-title">New Message</h6>
+        </div>
+        <div class="modal-body">
+          <textarea id="input_new_message" rows="8" cols="80" style="width: 100%"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary text-white" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary text-white" data-dismiss="modal" onclick="sendNewMessage()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-6">
+      <div class="col pr-3">
         <div class="card text-white bg-primary mt-3">
-          <div class="card-header" style="text-align: center">
+          <div class="card-header pl-2 pr-2" style="text-align: center">
             <div class="row">
-              <div class="col-2">
-                <button id="button_prev_day" class="btn btn-secondary text-white" onclick="prevDay()">
-                  <<<</button> </div> <div class="col-8">
-                    <h3 id="current_date"></h3>
-                    <script type="text/javascript">
-                      let date = new Date();
-                      let dd = String(date.getDate()).padStart(2, '0');
-                      let mm = String(date.getMonth() + 1).padStart(2, '0');
-                      let yyyy = date.getFullYear();
-                      date = mm + '/' + dd + '/' + yyyy;
-                      document.getElementById('current_date').innerHTML = date;
-                      sendDate();
-                      receiveScheduleData();
-                    </script>
-              </div>
-              <div class="col-2">
-                <button id="button_next_day" class="btn btn-secondary text-white" onclick="nextDay()">>>></button>
+              <div class="col">
+                <button id="button_prev_day" class="btn btn-secondary text-white" style="float: left" onclick="prevDay()"><<<</button>
+                <button id="button_next_day" class="btn btn-secondary text-white" style="float: right" onclick="nextDay()">>>></button>
+                <h3 id="current_date"></h3>
+                <script type="text/javascript">
+                  let date = new Date();
+                  let dd = String(date.getDate()).padStart(2, '0');
+                  let mm = String(date.getMonth() + 1).padStart(2, '0');
+                  let yyyy = date.getFullYear();
+                  date = mm + '/' + dd + '/' + yyyy;
+                  document.getElementById('current_date').innerHTML = date;
+                  sendDate();
+                  receiveScheduleData();
+                </script>
               </div>
             </div>
           </div>
-          <div class="card-body pb-0">
+          <div class="card-body pb-0 px-3">
             <div class="row">
-              <div class="col px-2">
+              <div class="col">
                 <div class="mb-1" style="overflow: auto">
                   <table id="ScheduleTable" class="table table-hover table-sm table-dark">
                     <!-- table rows to be added here (imported from file) -->
@@ -77,8 +90,47 @@
             </div>
           </div>
         </div>
-        <div class="col-6">
-
+      </div>
+      <div class="col pl-1">
+        <div class="card text-white bg-primary mt-3">
+          <div class="card-header px-2" style="text-align: center">
+            <div class="row">
+              <div class="col">
+                <button id="all_button" class="btn btn-secondary text-white mr-2" style="float: left" onclick="switchAllContacts()">All</button>
+                <button id="groups_button" class="btn btn-secondary text-white" style="float: left" onclick="switchContactGroups()">Groups</button>
+                <div class="dropdown">
+                  <button type="button" id="add_new_contact_button" class="btn btn-secondary text-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float: right; padding: 5px">
+                    <img src="img/add_new.png" style="width: 25px">
+                  </button>
+                  <div class="dropdown-menu">
+                    <button id="new_contact_button" class="dropdown-item" href="#" onclick="addNewContact()">New Contact</button>
+                    <button id="new_group_button" class="dropdown-item" href="#" onclick="addNewContactGroup()">New Group</button>
+                  </div>
+                </div>
+                <h3 id="current_contacts_tab">All Contacts</h3>
+              </div>
+            </div>
+          </div>
+          <div class="card-body pb-3 px-2">
+            <div class="row">
+              <div class="col">
+                <button id="new_message_button" class="btn btn-secondary text-white mr-2" style="float: left" data-toggle="modal" data-target="#modal_new_message">New Message</button>
+                <button id="send_schedule_button" class="btn btn-secondary text-white" style="float: left">Send Schedule</button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="mb-1" style="overflow: auto">
+                  <table id="contacts_table" class="table table-hover table-sm table-dark">
+                    <!-- table rows to be added here (imported from file) -->
+                  </table>
+                  <script type="text/javascript">
+                    getAllContacts();
+                  </script>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

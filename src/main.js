@@ -49,7 +49,7 @@ const createWindow = () => {
 
 
 const fileWriter = (event, arg, callback) => {
-  fs.readFile("data/" + arg[0] + ".json", 'utf8', (err, data) => {
+  fs.readFile("data/schedule" + arg[0] + ".json", 'utf8', (err, data) => {
     if (err) {
       return console.log(err);
     }
@@ -99,7 +99,7 @@ const fileWriter = (event, arg, callback) => {
         }
         sortedMessages.push(jsonObj.messages[minIndex]);
         jsonObj.messages[minIndex] = null;
-        //Adds message at i after the message at an earlier time is added 
+        //Adds message at i after the message at an earlier time is added
         if(minIndex != i) {
           sortedMessages.push(jsonObj.messages[i]);
           jsonObj.messages[i] = null;

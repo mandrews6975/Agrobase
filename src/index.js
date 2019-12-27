@@ -94,3 +94,27 @@ function SubmitButtonFunction() {
   document.getElementById('input_time').value = '';
   document.getElementById('input_announcement_event').value = '';
 }
+
+function switchAllContacts(){
+  document.getElementById('current_contacts_tab').innerHTML = 'All Contacts';
+  getAllContacts();
+}
+
+function switchContactGroups(){
+  document.getElementById('current_contacts_tab').innerHTML = 'Contact Groups';
+  getContactGroups();
+}
+
+function getAllContacts(){
+  ipcRenderer.send('get_all_contacts');
+  ipcRenderer.on('all_contacts', (event, args) => {
+
+  });
+}
+
+function getContactGroups(){
+  ipcRenderer.send('get_contact_groups');
+  ipcRenderer.on('contact_groups', (event, args) => {
+
+  });
+}
