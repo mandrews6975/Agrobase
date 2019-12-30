@@ -46,10 +46,69 @@ const createWindow = () => {
   });
 };
 
+//firstname lastname phone email
+const contactFileWriter = (event, arg, callback) => {
+  fs.readFile("data/contacts/indiv.json", 'utf8', (err,data) => {
+    if (err) {
+      return console.log(err);
+    }
+    let jsonObj = JSON.parse(data);
+    let newObj = {
+      lname:  arg[0],
+      fname:  arg[1],
+      phone: arg[2],
+      email: arg[3],
+    };
+    //Might want to include duplicate information check
+    jsonObj.contacts.push(newObj);
+    let index = jsonObj.contacts.length-1;
+    while((index>0) && jsonObj.contacts[index].lname<jsonObj.contacts[index-1].lname) {
+      let temp = jsonObj.contacts[index-1];
+      jsonObj.contacts[index-1] = jsonObj.contacts[index];
+      jsonObj.contacts[index] = temp;
+      index--;
+    }
+    let jsonString = JSON.stringify(jsonObj);
+    fs.writeFile("data/contacts/indiv.json", jsonString, function(err) {
+      if (err) {
+        return console.log(err);
+      }
+      if (callback) callback();
+    });
+  });
+}
 
+  const returnContactData = (event, arg) => {
+    fs.readFile("data/contacts/indiv.json", 'utf8', (err,data) => {
+      if (err) {
+        return console.log(err);
+      }
+      let contactData = JSON.parse(data);
+      event.sender.send('all_contacts', contactData);
+    });
+  }
 
-const fileWriter = (event, arg, callback) => {
-  fs.readFile("data/schedule" + arg[0] + ".json", 'utf8', (err, data) => {
+  const newGroupWriter = (event, arg, callback) => {
+    fs.appendFile("data/contacts/groups/" + arg + ".json", '{"contacts": [], "messages": []}', 'utf8', function(err) {
+      if (err) {
+        return console.log(err);
+      }
+      if(callback) callback();
+    });
+  }
+
+  const returnGroupArray = (event, arg) => {
+    fs.readFile("data/contacts/groups/" + arg + ".json", 'utf8', (err,data) => {
+      if (err) {
+        return console.log(err);
+      }
+      let groupData = JSON.parse(data);
+      event.sender.send('group_data', groupData);
+    });
+  }
+
+const scheduleFileWriter = (event, arg, callback) => {
+  fs.readFile("data/schedule/" + arg[0] + ".json", 'utf8', (err, data) => {
     if (err) {
       return console.log(err);
     }
@@ -61,7 +120,6 @@ const fileWriter = (event, arg, callback) => {
     };
     jsonObj.messages.push(newObj);
     // Sort array of messages
-    // FIXME
     let sortedMessages = [];
     for(let i = 0; i < jsonObj.messages.length; i++){
       if(jsonObj.messages[i].time == ''){
@@ -108,7 +166,7 @@ const fileWriter = (event, arg, callback) => {
     }
     jsonObj.messages = sortedMessages;
     let jsonString = JSON.stringify(jsonObj);
-    fs.writeFile("data/" + arg[0] + ".json", jsonString, function(err) {
+    fs.writeFile("data/schedule/" + arg[0] + ".json", jsonString, function(err) {
       if (err) {
         return console.log(err);
       }
@@ -117,9 +175,9 @@ const fileWriter = (event, arg, callback) => {
   });
 }
 
-const returnData = (event, arg) => {
-  if(fs.existsSync("data/" + arg + ".json")){
-    fs.readFile("data/" + arg + ".json", 'utf8', (err, data) => {
+const returnScheduleData = (event, arg) => {
+  if(fs.existsSync("data/schedule/" + arg + ".json")){
+    fs.readFile("data/schedule/" + arg + ".json", 'utf8', (err, data) => {
       if (err) {
         return console.log(err);
       }
@@ -127,18 +185,12 @@ const returnData = (event, arg) => {
       event.sender.send('ScheduleData', scheduleData);
     });
   }else{
-    fs.appendFile("data/" + arg + ".json", '{"messages": []}', 'utf8', function(err) {
+    fs.appendFile("data/schedule/" + arg + ".json", '{"messages": []}', 'utf8', function(err) {
       if (err) {
         return console.log(err);
       }
-      //readFile only can occur after appendFile callback
-      fs.readFile("data/" + arg + ".json", 'utf8', (err, data) => {
-        if (err) {
-          return console.log(err);
-        }
-        let scheduleData = JSON.parse(data);
-        event.sender.send('ScheduleData', scheduleData);
-      });
+      let scheduleData = [];
+      event.sender.send('ScheduleData', scheduleData);
     });
   }
 }
@@ -151,12 +203,28 @@ app.on('ready', createWindow);
 //ipc.on('SubmitButtonClick', fileWriter);
 app.on('ready', () => {
   ipcMain.on('SubmitButtonClick', (event, arg) => {
-    fileWriter(event, arg, () => {
-      event.sender.send('fileWritingDone');
+    scheduleFileWriter(event, arg, () => {
+      event.sender.send('scheduleWritingDone');
     });
   });
   ipcMain.on('Date', (event, arg) => {
-    returnData(event, arg);
+    returnScheduleData(event, arg);
+  });
+  ipcMain.on('addNewContact', (event, arg) => {
+    contactFileWriter(event, arg, () => {
+      event.sender.send('contactWritingDone');
+    });
+  });
+  ipcMain.on('get_all_contacts', (event, arg) => {
+    returnContactData(event, arg);
+  });
+  ipcMain.on('addNewGroup', (event, arg) => {
+    newGroupWriter(event, arg, () => {
+      event.sender.send("groupWritingDone");
+    });
+  });
+  ipcMain.on('get_group_data', (event, arg) => {
+    returnGroupArray(event, arg);
   });
 });
 

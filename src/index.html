@@ -13,6 +13,8 @@
     require('popper.js');
     require('bootstrap');
     require('electron');
+    window.$ = window.jQuery = require('jquery');
+    const fs = require('fs');
     const ipcRenderer = require('electron').ipcRenderer;
   </script>
   <script src="index.js"></script>
@@ -28,6 +30,41 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary text-white" data-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-secondary text-white" data-dismiss="modal" onclick="sendNewMessage()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal_new_contact" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content text-white bg-primary">
+        <div class="modal-header">
+          <h6 class="modal-title">New Contact</h6>
+        </div>
+        <div class="modal-body">
+          <input type="text" id="input_LastName" class="form-control" placeholder="Last Name" style= "width: 100%">
+          <input type="text" id="input_FirstName" class="form-control" placeholder="First Name" style= "width: 100%">
+          <input type="text" id="input_Phone" class="form-control" placeholder="Phone" style= "width: 100%">
+          <input type="text" id="input_Email" class="form-control" placeholder="Email" style= "width: 100%">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary text-white" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary text-white" data-dismiss="modal" onclick="addNewContact()">Create Contact</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal_new_group" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content text-white bg-primary">
+        <div class="modal-header">
+          <h6 class="modal-title">New Group</h6>
+        </div>
+        <div class="modal-body">
+          <input type="text" id="input_groupName" class="form-control" placeholder="Group Name" style= "width: 100%">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary text-white" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary text-white" onclick="addNewGroup()">Create Group</button>
         </div>
       </div>
     </div>
@@ -58,7 +95,7 @@
           <div class="card-body pb-0 px-3">
             <div class="row">
               <div class="col">
-                <div class="mb-1" style="overflow: auto">
+                <div class="mb-1" style="overflow-y:auto; display:block; max-height:650px; height:auto">
                   <table id="ScheduleTable" class="table table-hover table-sm table-dark">
                     <!-- table rows to be added here (imported from file) -->
                   </table>
@@ -103,8 +140,8 @@
                     <img src="img/add_new.png" style="width: 25px">
                   </button>
                   <div class="dropdown-menu">
-                    <button id="new_contact_button" class="dropdown-item" href="#" onclick="addNewContact()">New Contact</button>
-                    <button id="new_group_button" class="dropdown-item" href="#" onclick="addNewContactGroup()">New Group</button>
+                    <button id="new_contact_button" class="dropdown-item" href="#" data-toggle="modal" data-target="#modal_new_contact">New Contact</button>
+                    <button id="new_group_button" class="dropdown-item" href="#" data-toggle="modal" data-target="#modal_new_group">New Group</button>
                   </div>
                 </div>
                 <h3 id="current_contacts_tab">All Contacts</h3>

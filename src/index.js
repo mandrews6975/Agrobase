@@ -87,7 +87,7 @@ function SubmitButtonFunction() {
   }
   let args = [mm + dd + yyyy, document.getElementById('input_time').value, AMPM, document.getElementById('input_announcement_event').value];
   ipcRenderer.send('SubmitButtonClick', args);
-  ipcRenderer.on('fileWritingDone', () => {
+  ipcRenderer.on('scheduleWritingDone', () => {
     sendDate();
     receiveScheduleData();
   });
@@ -102,19 +102,67 @@ function switchAllContacts(){
 
 function switchContactGroups(){
   document.getElementById('current_contacts_tab').innerHTML = 'Contact Groups';
-  getContactGroups();
+  getGroupData("Drivers");
+  console.log(getGroupNames());
 }
 
 function getAllContacts(){
   ipcRenderer.send('get_all_contacts');
   ipcRenderer.on('all_contacts', (event, args) => {
-
+    //args contains a list of all contacts
   });
 }
 
-function getContactGroups(){
-  ipcRenderer.send('get_contact_groups');
-  ipcRenderer.on('contact_groups', (event, args) => {
+function sendNewMessage(groupName) {
 
+}
+
+function addNewContact(){
+  //args array last, first, phone, email
+  let lName = document.getElementById('input_LastName').value;
+  let fName = document.getElementById('input_FirstName').value;
+  let phone = document.getElementById('input_Phone').value;
+  let email = document.getElementById('input_Email').value;
+  document.getElementById('input_LastName').value = "";
+  document.getElementById('input_FirstName').value = "";
+  document.getElementById('input_Phone').value = "";
+  document.getElementById('input_Email').value = "";
+  let args = [lName,fName,phone,email];
+  ipcRenderer.send('addNewContact', args);
+  ipcRenderer.on('contactWritingDone', () => {
+    getAllContacts();
   });
+}
+
+function getGroupData(groupName){
+  ipcRenderer.send('get_group_data', groupName);
+  ipcRenderer.on('group_data', (event, args) => {
+    //args contains parsed group json object
+    console.log(args);
+  });
+}
+
+function getGroupNames() {
+  let nameList = [];
+  let fileList = fs.readdirSync('data/contacts/groups/');
+  for(let i = 0; i<fileList.length; i++) {
+    nameList.push(fileList[i].split('.').slice(0, -1).join('.'));
+  }
+  return nameList;
+}
+
+function addNewGroup() {
+  arg = document.getElementById('input_groupName').value;
+  if(fs.existsSync("data/contacts/groups/" + arg + ".json")){
+    document.getElementById("input_groupName").placeholder = "Group Name Already Exists";
+  }
+  else {
+    document.getElementById("input_groupName").placeholder = "Group Name";
+    jQuery('#modal_new_group').modal('hide');
+    ipcRenderer.send('addNewGroup', arg);
+    ipcRenderer.on('groupWritingDone', () => {
+      getGroupData("Drivers");
+    });
+  }
+  document.getElementById("input_groupName").value = "";
 }
