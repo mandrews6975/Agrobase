@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html style="min-height: 100%">
 
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="./bootstrap/css/bootstrap.min.css">
 </head>
 
-<body>
+<body style="min-height: 100vh">
   <script type="text/javascript">
     require('jquery');
     require('popper.js');
@@ -18,22 +18,6 @@
     const ipcRenderer = require('electron').ipcRenderer;
   </script>
   <script src="index.js"></script>
-  <div class="modal fade" id="modal_new_message" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content text-white bg-primary">
-        <div class="modal-header">
-          <h6 class="modal-title">New Message</h6>
-        </div>
-        <div class="modal-body">
-          <textarea id="input_new_message" rows="8" cols="80" style="width: 100%"></textarea>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary text-white" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-secondary text-white" data-dismiss="modal" onclick="sendNewMessage()">Send</button>
-        </div>
-      </div>
-    </div>
-  </div>
   <div class="modal fade" id="modal_new_contact" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content text-white bg-primary">
@@ -60,7 +44,7 @@
           <h6 class="modal-title">New Group</h6>
         </div>
         <div class="modal-body">
-          <input type="text" id="input_groupName" class="form-control" placeholder="Group Name" style= "width: 100%">
+          <input type="text" id="input_groupName_newGroup" class="form-control" placeholder="Group Name" style= "width: 100%">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary text-white" data-dismiss="modal">Cancel</button>
@@ -69,10 +53,31 @@
       </div>
     </div>
   </div>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col pr-3">
-        <div class="card text-white bg-primary mt-3">
+  <div class="modal fade" id="modal_edit_group" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content text-white bg-primary">
+        <div class="modal-header">
+          <h6 class="modal-title">Edit Group</h6>
+        </div>
+        <div class="modal-body">
+          <input type="text" id="input_groupName_editGroup" class="form-control" placeholder="Group Name" style= "width: 100%">
+          <div class="mt-2" style="height: 300px; overflow-y: auto">
+            <table id="edit_group_contacts_table" class="table table-hover table-sm table-dark mb-3">
+              <!-- table rows to be added here (imported from file) -->
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary text-white" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary text-white" onclick="saveGroupChanges()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid content-row" style="min-height: 100vh">
+    <div class="row pb-3" style="min-height: 100vh">
+      <div class="col pr-3 pb-3">
+        <div class="card text-white bg-primary mt-3 h-100">
           <div class="card-header pl-2 pr-2" style="text-align: center">
             <div class="row">
               <div class="col">
@@ -93,43 +98,47 @@
             </div>
           </div>
           <div class="card-body pb-0 px-3">
-            <div class="row">
+            <div class="row" style="height: 90%">
               <div class="col">
-                <div class="mb-1" style="overflow-y:auto; display:block; max-height:650px; height:auto">
+                <div class="mb-0" style="flex-grow: 1; overflow-y:auto">
                   <table id="ScheduleTable" class="table table-hover table-sm table-dark">
                     <!-- table rows to be added here (imported from file) -->
                   </table>
                 </div>
               </div>
-              <div class="input-group mx-2 mb-3">
-                <div class="input-group-prepend">
-                  <div class="dropdown">
-                    <button type="button" id="button_dropdown" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Announcement</button>
-                    <div class="dropdown-menu">
-                      <button id="dditem_ann" class="dropdown-item" href="#" onclick="changeAnn()">Announcement</button>
-                      <button id="dditem_event" class="dropdown-item" href="#" onclick="changeEvent()">Event</button>
+            </div>
+            <div class="row w-100" style="position: absolute; bottom: 0">
+              <div class="col px-2">
+                <div class="input-group mb-2">
+                  <div class="input-group-prepend">
+                    <div class="dropdown">
+                      <button type="button" id="button_dropdown" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Announcement</button>
+                      <div class="dropdown-menu">
+                        <button id="dditem_ann" class="dropdown-item" href="#" onclick="changeAnn()">Announcement</button>
+                        <button id="dditem_event" class="dropdown-item" href="#" onclick="changeEvent()">Event</button>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <input type="text" id="input_time" class="form-control" placeholder="Time (02:00)" style="display: none;">
-                <div class="dropdown">
-                  <button type="button" id="AMPM_dropdown" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: none;">AM</button>
-                  <div class="dropdown-menu">
-                    <button id="AM_Button" class="dropdown-item" href="#" onclick="changeAM()">AM</button>
-                    <button id="PM_Button" class="dropdown-item" href="#" onclick="changePM()">PM</button>
+                  <input type="text" id="input_time" class="form-control" placeholder="Time (02:00)" style="display: none;">
+                  <div class="dropdown">
+                    <button type="button" id="AMPM_dropdown" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: none;">AM</button>
+                    <div class="dropdown-menu">
+                      <button id="AM_Button" class="dropdown-item" href="#" onclick="changeAM()">AM</button>
+                      <button id="PM_Button" class="dropdown-item" href="#" onclick="changePM()">PM</button>
+                    </div>
                   </div>
-                </div>
-                <input type="text" id="input_announcement_event" class="form-control" placeholder="Information" style="width: 50%">
-                <div class="input-group-append">
-                  <button id="SubmitButton" class="btn btn-secondary text-white" onclick="SubmitButtonFunction()">Submit</button>
+                  <input type="text" id="input_announcement_event" class="form-control" placeholder="Information" style="width: 50%">
+                  <div class="input-group-append">
+                    <button id="SubmitButton" class="btn btn-secondary text-white" onclick="SubmitButtonFunction()">Submit</button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="col pl-1">
-        <div class="card text-white bg-primary mt-3">
+      <div class="col pl-1 pb-3">
+        <div class="card text-white bg-primary mt-3 h-100">
           <div class="card-header px-2" style="text-align: center">
             <div class="row">
               <div class="col">
@@ -148,22 +157,33 @@
               </div>
             </div>
           </div>
-          <div class="card-body pb-3 px-2">
+          <div class="card-body pb-0 px-2">
             <div class="row">
               <div class="col">
-                <button id="new_message_button" class="btn btn-secondary text-white mr-2" style="float: left" data-toggle="modal" data-target="#modal_new_message">New Message</button>
                 <button id="send_schedule_button" class="btn btn-secondary text-white" style="float: left">Send Schedule</button>
+                <button id="edit_group_button" class="btn btn-secondary text-white ml-2" onclick="editGroup()" style="display: none" href="#" data-toggle="modal" data-target="#modal_edit_group">Edit Group</button>
+                <button id="delete_button" class="btn btn-secondary text-white" style="float: right">Delete</button>
               </div>
             </div>
-            <div class="row">
+            <div class="row" style="height: 85%">
               <div class="col">
-                <div class="mb-1" style="overflow: auto">
-                  <table id="contacts_table" class="table table-hover table-sm table-dark">
+                <div class="mt-2" style="flex-grow: 1; overflow-y: auto">
+                  <table id="contacts_table" class="table table-hover table-sm table-dark mb-3">
                     <!-- table rows to be added here (imported from file) -->
                   </table>
                   <script type="text/javascript">
                     getAllContacts();
                   </script>
+                </div>
+              </div>
+            </div>
+            <div class="row w-100" style="position: absolute; bottom: 0">
+              <div class="col px-2">
+                <div class="input-group mb-2 mx-2">
+                  <input id="new_message_input" class="form-control" type="text" placeholder="Message">
+                  <div class="input-group-append">
+                    <button class="btn btn-secondary text-white" type="button">Send</button>
+                  </div>
                 </div>
               </div>
             </div>
