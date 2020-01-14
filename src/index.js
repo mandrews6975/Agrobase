@@ -7,10 +7,10 @@ function sendDate() {
 }
 //Waits to recieve list of schedule entries, renders schedule
 function receiveScheduleData() {
-  ipcRenderer.on('ScheduleData', (event, arg) => {
+  ipcRenderer.once('ScheduleData', (event, arg) => {
     let numRows = document.getElementById('ScheduleTable').children.length;
     for (var i = 0; i < numRows; i++) {
-      document.getElementById('ScheduleTable').children[i].remove();
+      document.getElementById('ScheduleTable').children[0].remove();
     }
     for (var i = 0; i < arg.messages.length; i++) {
       let row = document.getElementById('ScheduleTable').insertRow(i);
@@ -87,7 +87,7 @@ function SubmitButtonFunction() {
   }
   let args = [mm + dd + yyyy, document.getElementById('input_time').value, AMPM, document.getElementById('input_announcement_event').value];
   ipcRenderer.send('SubmitButtonClick', args);
-  ipcRenderer.on('scheduleWritingDone', () => {
+  ipcRenderer.once('scheduleWritingDone', () => {
     sendDate();
     receiveScheduleData();
   });
@@ -96,14 +96,18 @@ function SubmitButtonFunction() {
 }
 
 function switchAllContacts(){
-  document.getElementById('current_contacts_tab').innerHTML = 'All Contacts';
-  getAllContacts();
+  document.getElementById('new_message_input').style.display = "none";
+  document.getElementById('send_message_button').style.display = "none";
+  document.getElementById('messenger_card_title').innerHTML = 'All Contacts';
+  displayMessengerContacts();
 }
 
 function switchContactGroups(){
+  document.getElementById('new_message_input').style.display = 'none';
+  document.getElementById('send_message_button').style.display = 'none';
   document.getElementById('delete_button').style = 'display: ; float: right';
   document.getElementById('edit_group_button').style = 'display: none';
-  document.getElementById('current_contacts_tab').innerHTML = 'Contact Groups';
+  document.getElementById('messenger_card_title').innerHTML = 'Contact Groups';
   let numElements = document.getElementById('contacts_table').children.length;
   for(let i = 0; i < numElements; i++){
     document.getElementById('contacts_table').children[0].remove();
@@ -114,7 +118,7 @@ function switchContactGroups(){
     let groupListing = document.createElement('td');
     groupListing.appendChild(document.createTextNode(group));
     groupListing.addEventListener('click', () => {
-      getGroupData(groupListing.innerHTML.substring(0, groupListing.innerHTML.indexOf('<')));
+      displayMessengerGroup(groupListing.innerHTML.substring(0, groupListing.innerHTML.indexOf('<')));
     });
     let checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -125,9 +129,15 @@ function switchContactGroups(){
   }
 }
 
-function getAllContacts(){
+function getAllContacts(callback) {
   ipcRenderer.send('get_all_contacts');
-  ipcRenderer.on('all_contacts', (event, args) => {
+  ipcRenderer.once('all_contacts', (event, args) => {
+    if (callback) callback(event, args);
+  });
+}
+
+function displayMessengerContacts() {
+  getAllContacts((event, args) => {
     document.getElementById('delete_button').style = 'display: ; float: right';
     document.getElementById('edit_group_button').style = 'display: none';
     let numElements = document.getElementById('contacts_table').children.length;
@@ -150,11 +160,7 @@ function getAllContacts(){
   });
 }
 
-function sendNewMessage(groupName) {
-
-}
-
-function addNewContact(){
+function addNewContact() {
   //args array last, first, phone, email
   let lName = document.getElementById('input_LastName').value;
   let fName = document.getElementById('input_FirstName').value;
@@ -166,43 +172,55 @@ function addNewContact(){
   document.getElementById('input_Email').value = "";
   let args = [lName,fName,phone,email];
   ipcRenderer.send('addNewContact', args);
-  ipcRenderer.on('contactWritingDone', () => {
-    getAllContacts();
+  ipcRenderer.once('contactWritingDone', () => {
+    displayMessengerContacts();
   });
 }
 
-function getGroupData(groupName){
+function deleteContact() {
+  //TODO
+}
+
+function displayMessengerGroup(groupName) {
+    getGroupData(groupName, (event, args) => {
+      document.getElementById('delete_button').style = 'display: none';
+      document.getElementById('new_message_input').style.display = "block";
+      document.getElementById('send_message_button').style.display = "block";
+      document.getElementById('messenger_card_title').innerHTML = groupName;
+      let numElements = document.getElementById('contacts_table').children.length;
+      for(let i = 0; i < numElements; i++){
+        document.getElementById('contacts_table').children[0].remove();
+      }
+      //args contains parsed group json object
+      document.getElementById('edit_group_button').style = 'display: ';
+      for(const message of args.messages){
+        let row = document.createElement('tr');
+        let messageListing = document.createElement('td');
+        let card = document.createElement('div');
+        card.classList.add('card');
+        card.classList.add('bg-info');
+        card.classList.add('mb-2');
+        let cardBody = document.createElement('div');
+        cardBody.classList.add('px-1');
+        cardBody.classList.add('py-1');
+        cardBody.classList.add('card-body');
+        let cardTitle = document.createElement('h5');
+        cardTitle.classList.add('card-title');
+        cardTitle.appendChild(document.createTextNode(message.message));
+        cardBody.appendChild(cardTitle);
+        cardBody.appendChild(document.createTextNode('Sent: ' + message.time));
+        card.appendChild(cardBody);
+        messageListing.appendChild(card);
+        row.appendChild(messageListing);
+        document.getElementById('contacts_table').appendChild(row);
+      }
+    });
+}
+
+function getGroupData(groupName, callback){
   ipcRenderer.send('get_group_data', groupName);
-  ipcRenderer.on('group_data', (event, args) => {
-    document.getElementById('delete_button').style = 'display: none';
-    document.getElementById('current_contacts_tab').innerHTML = groupName;
-    let numElements = document.getElementById('contacts_table').children.length;
-    for(let i = 0; i < numElements; i++){
-      document.getElementById('contacts_table').children[0].remove();
-    }
-    //args contains parsed group json object
-    document.getElementById('edit_group_button').style = 'display: ';
-    for(const message of args.messages){
-      let row = document.createElement('tr');
-      let messageListing = document.createElement('td');
-      let card = document.createElement('div');
-      card.classList.add('card');
-      card.classList.add('bg-info');
-      card.classList.add('mb-2');
-      let cardBody = document.createElement('div');
-      cardBody.classList.add('px-1');
-      cardBody.classList.add('py-1');
-      cardBody.classList.add('card-body');
-      let cardTitle = document.createElement('h5');
-      cardTitle.classList.add('card-title');
-      cardTitle.appendChild(document.createTextNode(message.message));
-      cardBody.appendChild(cardTitle);
-      cardBody.appendChild(document.createTextNode('Sent: ' + message.time));
-      card.appendChild(cardBody);
-      messageListing.appendChild(card);
-      row.appendChild(messageListing);
-      document.getElementById('contacts_table').appendChild(row);
-    }
+  ipcRenderer.once('group_data', (event, args) => {
+    if(callback) callback(event,args);
   });
 }
 
@@ -219,32 +237,33 @@ function addNewGroup() {
   arg = document.getElementById('input_groupName_newGroup').value;
   if(fs.existsSync("data/contacts/groups/" + arg + ".json")){
     document.getElementById("input_groupName_newGroup").placeholder = "Group Name Already Exists";
-    document.getElementById("input_groupName_newGroup").value = '';
   }
   else {
     jQuery('#modal_new_group').modal('hide');
     ipcRenderer.send('addNewGroup', arg);
-    ipcRenderer.on('groupWritingDone', () => {
-      getGroupData("Drivers");
+    ipcRenderer.once('groupWritingDone', () => {
+      switchContactGroups();
     });
   }
-  document.getElementById("input_groupName").value = "";
+  document.getElementById("input_groupName_newGroup").value = "";
+}
+
+function deleteGroup() {
+  //TODO
 }
 
 function editGroup(){
-  document.getElementById('input_groupName_editGroup').value = document.getElementById('current_contacts_tab').innerHTML;
-  ipcRenderer.send('get_all_contacts');
-  ipcRenderer.on('all_contacts', (event, allContacts) => {
+  document.getElementById('input_groupName_editGroup').value = document.getElementById('messenger_card_title').innerHTML;
+  getAllContacts((event, allContacts) => {
     let numElements = document.getElementById('edit_group_contacts_table').children.length;
     for(let i = 0; i < numElements; i++){
       document.getElementById('edit_group_contacts_table').children[0].remove();
     }
-    ipcRenderer.send('get_group_data', document.getElementById('current_contacts_tab').innerHTML);
-    ipcRenderer.on('group_data', (event, groupData) => {
+    getGroupData(document.getElementById('messenger_card_title').innerHTML, (event, groupData) => {
       for(const contact of allContacts.contacts){
         let row = document.createElement('tr');
         let contactListing = document.createElement('td');
-        contactListing.appendChild(document.createTextNode(contact.fname + ' ' + contact.lname + '\n' + contact.phone + '   ' + contact.email));
+        contactListing.appendChild(document.createTextNode(contact.fname + ' ' + contact.lname + ' \n ' + contact.phone + ' ' + contact.email));
         contactListing.style = 'white-space: pre';
         let checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
@@ -265,6 +284,84 @@ function editGroup(){
   });
 }
 
-function saveGroupChanges(){
+function saveGroupChanges() {
+  let originalName = document.getElementById("messenger_card_title").innerHTML;
+  let newName = document.getElementById("input_groupName_editGroup").value;
+  fs.readFile("data/contacts/groups/" + originalName + ".json", 'utf8', (err, data) => {
+    if (err) {
+      return console.log(err);
+    }
+    let jsonObj = JSON.parse(data);
+    let indivArray = [];
+    for(const child of document.getElementById('edit_group_contacts_table').children) {
+      if(child.children[0].children[0].checked) {
+        let parsed = child.outerText.split(" ");
+        let newIndiv = {
+          lname: parsed[1],
+          fname: parsed[0],
+          phone: parsed[3],
+          email: parsed[4],
+        }
+        indivArray.push(newIndiv);
+      }
+    }
+    jsonObj.contacts = indivArray;
+    //If group name is changed
+    if(originalName != newName) {
+      if(fs.existsSync("data/contacts/groups/" + newName + ".json")) {
+        //Error message for new group modal
+        document.getElementById("input_groupName_editGroup").value = "";
+        document.getElementById("input_groupName_editGroup").placeholder = "Group Name Already Exists";
+      }
+      else {
+        fs.appendFile("data/contacts/groups/" + newName + ".json", JSON.stringify(jsonObj), 'utf8', function(err) {
+          if (err) {
+            return console.log(err);
+          }
+          //Update messenger card, hide modal
+          jQuery('#modal_edit_group').modal('hide');
+          displayMessengerGroup(newName);
+        });
+      }
+    }
+    //If group name is not changed
+    else {
+      fs.writeFile("data/contacts/groups/" + originalName + ".json", JSON.stringify(jsonObj), function(err) {
+        if (err) {
+          return console.log(err);
+        }
+        //Update messenger card
+        jQuery('#modal_edit_group').modal('hide');
+        displayMessengerGroup(originalName);
+      });
+    }
+  });
+}
 
+function sendNewMessage() {
+  let groupName = document.getElementById('messenger_card_title').innerHTML;
+  fs.readFile("data/contacts/groups/" + groupName + ".json", 'utf8', (err, data) => {
+    if (err) {
+      return console.log(err);
+    }
+    let jsonObj = JSON.parse(data);
+    let newMessage = {
+      message: document.getElementById("new_message_input").value,
+      time: Date(),
+    }
+    jsonObj.messages.push(newMessage);
+    fs.writeFile("data/contacts/groups/" + groupName + ".json", JSON.stringify(jsonObj), function(err) {
+      if (err) {
+        return console.log(err);
+      }
+      document.getElementById("new_message_input").value = "";
+      displayMessengerGroup(groupName);
+    });
+  });
+
+  //TODO: Actual email Messaging
+}
+
+function sendSchedule() {
+  //TODO: Sends Schedule via email to listed groups based on schedule data
 }

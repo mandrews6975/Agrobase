@@ -189,7 +189,7 @@ const returnScheduleData = (event, arg) => {
       if (err) {
         return console.log(err);
       }
-      let scheduleData = [];
+      let scheduleData = {"messages":[]};
       event.sender.send('ScheduleData', scheduleData);
     });
   }

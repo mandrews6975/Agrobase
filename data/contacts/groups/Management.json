@@ -1,1 +1,1 @@
-{"contacts": [], "messages": []}
+{"contacts":[{"lname":"Andrews","fname":"Michael","phone":"111-222-3333","email":"123@yahoo.com"},{"lname":"Sheaffer","fname":"Lewis","phone":"123-456-7890","email":"123@gmail.com"}],"messages":[{"message":"What do we need to work on for tommorow","time":"Mon Jan 13 2020 23:10:06 GMT-0600 (Central Standard Time)"}]}
