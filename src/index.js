@@ -365,3 +365,111 @@ function sendNewMessage() {
 function sendSchedule() {
   //TODO: Sends Schedule via email to listed groups based on schedule data
 }
+
+
+//Messenger Box Stuff....
+
+function ableDisableSettings() {
+  if(document.getElementById("settings_switch").checked = "true") {
+    document.getElementById("auto_title_input").setAttribute("aria-disabled","true");
+    document.getElementById("auto_AMPM_dropdown").setAttribute("aria-disabled","true");
+    document.getElementById("auto_hours_dropdown").setAttribute("aria-disabled","true");
+    document.getElementById("auto_minutes_dropdown").setAttribute("aria-disabled","true");
+  }
+  else {
+    document.getElementById("auto_title_input").setAttribute("aria-disabled","false");
+    document.getElementById("auto_AMPM_dropdown").setAttribute("aria-disabled","false");
+    document.getElementById("auto_hours_dropdown").setAttribute("aria-disabled","false");
+    document.getElementById("auto_minutes_dropdown").setAttribute("aria-disabled","false");
+  }
+}
+
+//Needs to be fixed
+//When clicking switch, everything except save and cancel should be disabled
+function toggleAutomation() {
+  if(document.getElementById("switch_label").innerHTML == "Automatic Announcements are OFF") {
+    document.getElementById("switch_label").innerHTML = "Automatic Announcements are ON";
+  }
+  else {
+    document.getElementById("switch_label").innerHTML = "Automatic Announcements are OFF";
+  }
+  ableDisableSettings();
+}
+
+function toggleAutomationAMPM() {
+  if(document.getElementById("auto_AMPM_dropdown").innerHTML == "PM") {
+    document.getElementById("auto_AMPM_dropdown").innerHTML = "AM";
+  }
+  else {
+    document.getElementById("auto_AMPM_dropdown").innerHTML = "PM";
+  }
+}
+
+function setAutomationHours(hour) {
+  document.getElementById("auto_hours_dropdown").innerHTML = hour;
+}
+
+function setAutomationMinutes(minutes) {
+  if(minutes == 0) {
+    document.getElementById("auto_minutes_dropdown").innerHTML = "00";
+  }
+  else {
+    document.getElementById("auto_minutes_dropdown").innerHTML = minutes;
+  }
+}
+
+//Needs to be fixed
+function saveAutomationSettings() {
+  let days = [];
+  let daysList = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
+  for(var i = 0; i<7; i++) {
+    if(document.getElementById("button_" + daysList[i]).pressed == "true") {
+      days.push(daysList[i]);
+    }
+  }
+  let time = "" + document.getElementById("auto_hours_dropdown").innerHTML + ":" + document.getElementById("auto_minutes_dropdown").innerHTML;
+  let settings = {
+    toggle:document.getElementById("settings_switch").checked,
+    title:document.getElementById("auto_title_input").value,
+    time:time,
+    ampm:document.getElementById("auto_AMPM_dropdown").innerHTML,
+    days:days,
+  }
+  let settingsString = JSON.stringify(settings);
+  fs.writeFile("data/automationSettings.json", settingsString, (err, data) => {
+    if(err) {
+      return console.log(err);
+    }
+  });
+}
+
+//Needs to be fixed
+function updateAutomationSettingsDisplay() {
+  fs.readFile("data/automationSettings.json", 'utf8', (err, data) => {
+    if(err) {
+      return console.log(err);
+    }
+    let jsonObj = JSON.parse(data);
+    let time = jsonObj.time.split(":");
+    let hours = time[0];
+    let minutes = time[1];
+    if(jsonObj.toggle) {
+      //Not sure if either of these will work, The check prop is not changing anything for the elements
+      document.getElementById("settings_switch").checked="true";
+      $("setting_switch").attr("checked","true");
+      document.getElementById("switch_label").innerHTML = "Automatic Announcements are ON";
+    }
+    else{
+      $("settings_switch").attr("aria-checked","false");
+      document.getElementById("switch_label").innerHTML = "Automatic Announcements are OFF";
+    }
+    ableDisableSettings();
+    document.getElementById('auto_title_input').value = jsonObj.title;
+    setAutomationHours(hours);
+    setAutomationMinutes(minutes);
+    document.getElementById('auto_AMPM_dropdown').innerHTML = jsonObj.ampm;
+    for(var i = 0; i<(jsonObj.days.length); i++) {
+      document.getElementById("button_" + jsonObj.days[i]).setAttribute("aria-pressed","true");
+    }
+  });
+}

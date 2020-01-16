@@ -53,6 +53,81 @@
       </div>
     </div>
   </div>
+  <div class="modal fade" id="modal_settings" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content text-white bg-primary">
+        <div class="modal-header">
+          <h6 class="modal-title">Schedular Settings</h6>
+          <div class="form-group">
+            <div class="custom-control custom-switch active" style="float: right">
+              <input type="checkbox" class="custom-control-input" id="settings_switch" checked="true">
+              <label class="custom-control-label" id="switch_label" for="settings_switch">Automatic Announcements are OFF</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col">
+              <input id="auto_title_input" type="text" aria-disabled="false" placeholder="Schedular Title" value="Schedular Title">
+            </div>
+            <div class="col">
+              <div class="row">
+                <div class="dropdown">
+                  <button type="button" id="auto_hours_dropdown" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-disabled="false">12</button>
+                  <div class="dropdown-menu">
+                    <button id="clock_one" class="dropdown-item" href="#" onclick="setAutomationHours(1)">1</button>
+                    <button id="clock_two" class="dropdown-item" href="#" onclick="setAutomationHours(2)">2</button>
+                    <button id="clock_three" class="dropdown-item" href="#" onclick="setAutomationHours(3)">3</button>
+                    <button id="clock_four" class="dropdown-item" href="#" onclick="setAutomationHours(4)">4</button>
+                    <button id="clock_five" class="dropdown-item" href="#" onclick="setAutomationHours(5)">5</button>
+                    <button id="clock_six" class="dropdown-item" href="#" onclick="setAutomationHours(6)">6</button>
+                    <button id="clock_seven" class="dropdown-item" href="#" onclick="setAutomationHours(7)">7</button>
+                    <button id="clock_eight" class="dropdown-item" href="#" onclick="setAutomationHours(8)">8</button>
+                    <button id="clock_nine" class="dropdown-item" href="#" onclick="setAutomationHours(9)">9</button>
+                    <button id="clock_ten" class="dropdown-item" href="#" onclick="setAutomationHours(10)">10</button>
+                    <button id="clock_eleven" class="dropdown-item" href="#" onclick="setAutomationHours(11)">11</button>
+                    <button id="clock_twelve" class="dropdown-item" href="#" onclick="setAutomationHours(12)">12</button>
+                  </div>
+                </div>
+                <h6 class="pt-2">:</h6>
+                <div class="dropdown pr-1">
+                  <button type="button" id="auto_minutes_dropdown" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-disabled="false">00</button>
+                  <div class="dropdown-menu">
+                    <button id="minutes_zero" class="dropdown-item" href="#" onclick="setAutomationMinutes(00)">00</button>
+                    <button id="minutes_fifteen" class="dropdown-item" href="#" onclick="setAutomationMinutes(15)">15</button>
+                    <button id="minutes_thirty" class="dropdown-item" href="#" onclick="setAutomationMinutes(30)">30</button>
+                    <button id="minutes_fortyfive" class="dropdown-item" href="#" onclick="setAutomationMinutes(45)">45</button>
+                  </div>
+                </div>
+                <div class="dropdown">
+                  <button type="button" id="auto_AMPM_dropdown" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">AM</button>
+                  <div class="dropdown-menu">
+                    <button id="AM_Button" class="dropdown-item" href="#" aria-disabled="false" onclick="toggleAutomationAMPM()">AM</button>
+                    <button id="PM_Button" class="dropdown-item" href="#"aria-disabled="false" onclick="toggleAutomationAMPM()">PM</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row pt-2 pl-3">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <button type="button" id="button_Sun" class="btn btn-primary btn-m text-white"  aria-disabled="false" autocomplete="off">Sun</button>
+              <button type="button" id="button_Mon" class="btn btn-primary btn-m text-white active" aria-pressed="true" aria-disabled="true">Mon</button>
+              <button type="button" id="button_Tue" class="btn btn-primary btn-m text-white active" aria-pressed="false" aria-disabled="false">Tue</button>
+              <button type="button" id="button_Wed" class="btn btn-primary btn-m text-white active" aria-pressed="true" aria-disabled="false">Wed</button>
+              <button type="button" id="button_Thu" class="btn btn-primary btn-m text-white active" aria-pressed="false" disabled>Thu</button>
+              <button type="button" id="button_Fri" class="btn btn-primary btn-m text-white active" aria-pressed="true" aria-disabled="false">Fri</button>
+              <button type="button" id="button_Sat"class="btn btn-primary btn-m text-white active" aria-pressed="true" aria-disabled="false">Sat</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary text-white" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary text-white" onclick="saveAutomationSettings()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="modal fade" id="modal_edit_group" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content text-white bg-primary">
@@ -83,6 +158,7 @@
               <div class="col">
                 <button id="button_prev_day" class="btn btn-secondary text-white" style="float: left" onclick="prevDay()"><<<</button>
                 <button id="button_next_day" class="btn btn-secondary text-white" style="float: right" onclick="nextDay()">>>></button>
+                <button id="settings_button" class="btn btn-secondary text-white mr-2" style="float: right"  href="#" data-toggle="modal" data-target="#modal_settings" onclick="updateAutomationSettingsDisplay()">Settings</button>
                 <h3 id="current_date"></h3>
                 <script type="text/javascript">
                   let date = new Date();
@@ -93,6 +169,7 @@
                   document.getElementById('current_date').innerHTML = date;
                   sendDate();
                   receiveScheduleData();
+                  updateAutomationSettingsDisplay();
                 </script>
               </div>
             </div>
